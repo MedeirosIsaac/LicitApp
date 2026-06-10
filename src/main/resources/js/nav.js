@@ -1,7 +1,7 @@
 /* ============================================================
    LicitApp — nav.js
    Sistema de transições suaves entre páginas.
-   Incluir em todos os arquivos de preview e templates.
+   Incluindo em todos os arquivos de preview e templates.
    ============================================================ */
 
 'use strict';

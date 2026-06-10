@@ -1,37 +1,35 @@
 /* ============================================================
    LicitApp — analise.js
-   Responsabilidades:
      1. Renderizar PDFs nos dois painéis com PDF.js (texto selecionável)
-     2. Capturar seleção de texto e ancorá-la ao formulário de comentário
-     3. Carregar comentários existentes da API (GET)
-     4. Enviar novos comentários para a API (POST)
+     2. Capturando seleção de texto e ancorá-la ao formulário de comentário
+     3. Carregando comentários existentes da API (GET)
+     4. Enviando novos comentários para a API (POST)
    ============================================================ */
 
 'use strict';
 
-/* ── Configuração do worker do PDF.js ──────────────────────── */
+
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-/* ── Leitura dos dados injetados pelo Thymeleaf ─────────────── */
+
 const appData = document.getElementById('app-data').dataset;
 
 const API = {
-  minutaPdfUrl:         appData.minutaPdfUrl,
-  regularizacaoPdfUrl:  appData.regularizacaoPdfUrl,
+  minutaPdfUrl:         '/pdfs/minuta.pdf',
+  regularizacaoPdfUrl:  '/pdfs/aditivo.pdf',
   comentariosUrl:       appData.comentariosUrl,
 };
 
-/* ── Estado da aplicação ─────────────────────────────────────── */
 const state = {
-  trecho:         null,   // Texto do trecho selecionado no PDF
-  scaleLeft:      1.4,    // Zoom do painel esquerdo
-  scaleRight:     1.4,    // Zoom do painel direito
-  pdfLeft:        null,   // Objeto PDF.js do painel esquerdo
-  pdfRight:       null,   // Objeto PDF.js do painel direito
+  trecho:         null,   
+  scaleLeft:      1.4,    
+  scaleRight:     1.4,    
+  pdfLeft:        null,   
+  pdfRight:       null,  
 };
 
-/* ── Referências DOM ─────────────────────────────────────────── */
+
 const $ = id => document.getElementById(id);
 
 const viewerLeft       = $('viewer-left');
@@ -47,18 +45,15 @@ const trechoText       = $('trecho-text');
 const btnSalvar        = $('btn-salvar');
 const selectionTooltip = $('selection-tooltip');
 
-/* ============================================================
-   1. RENDERIZAÇÃO DO PDF
-   ============================================================ */
 
 /**
  * Inicializa um viewer PDF em um container.
- * Renderiza todas as páginas com canvas + text layer selecionável.
+ * Renderizando todas as páginas com canvas + text layer selecionável.
  *
- * @param {string}      pdfUrl    - URL do endpoint que retorna o PDF
- * @param {HTMLElement} container - Elemento onde as páginas serão inseridas
- * @param {HTMLElement} loading   - Spinner de carregamento
- * @param {string}      side      - 'left' | 'right' (para controle de zoom)
+ * @param {string}      pdfUrl    
+ * @param {HTMLElement} container 
+ * @param {HTMLElement} loading  
+ * @param {string}      side      
  * @returns {Promise<PDFDocumentProxy>}
  */
 async function initPdfViewer(pdfUrl, container, loading, side) {
@@ -89,23 +84,18 @@ async function initPdfViewer(pdfUrl, container, loading, side) {
   }
 }
 
-/**
- * Renderiza todas as páginas de um PDF no container.
- * Cada página tem: canvas (visível) + textLayer (invisível, para seleção de texto).
- */
+
 async function renderAllPages(pdf, container, scale) {
-  /* Remove páginas antigas (para re-render ao mudar zoom) */
   container.querySelectorAll('.pdf-page-wrapper').forEach(el => el.remove());
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page     = await pdf.getPage(pageNum);
     const viewport = page.getViewport({ scale });
 
-    /* Wrapper da página */
     const pageWrapper = document.createElement('div');
     pageWrapper.className = 'pdf-page-wrapper';
 
-    /* Canvas (imagem do PDF) */
+
     const canvasWrap = document.createElement('div');
     canvasWrap.className = 'pdf-canvas-wrap';
 
@@ -118,7 +108,6 @@ async function renderAllPages(pdf, container, scale) {
 
     canvasWrap.appendChild(canvas);
 
-    /* Text layer (sobreposto, permite selecionar texto) */
     const textLayerDiv = document.createElement('div');
     textLayerDiv.className = 'textLayer';
     textLayerDiv.style.width  = viewport.width  + 'px';
@@ -126,7 +115,7 @@ async function renderAllPages(pdf, container, scale) {
     canvasWrap.appendChild(textLayerDiv);
     canvasWrap.style.position = 'relative';
 
-    /* Número da página */
+
     const pageNumDiv = document.createElement('div');
     pageNumDiv.className = 'page-num';
     pageNumDiv.textContent = `Página ${pageNum} de ${pdf.numPages}`;
@@ -135,10 +124,8 @@ async function renderAllPages(pdf, container, scale) {
     pageWrapper.appendChild(pageNumDiv);
     container.appendChild(pageWrapper);
 
-    /* Renderiza o canvas */
     await page.render({ canvasContext: context, viewport }).promise;
 
-    /* Renderiza o text layer para permitir seleção */
     const textContent = await page.getTextContent();
     pdfjsLib.renderTextLayer({
       textContent,
@@ -149,7 +136,6 @@ async function renderAllPages(pdf, container, scale) {
   }
 }
 
-/* ── Zoom ─────────────────────────────────────────────────── */
 
 function getScale(side) {
   return side === 'left' ? state.scaleLeft : state.scaleRight;
@@ -175,22 +161,11 @@ async function zoomOut(side) {
   }
 }
 
-/* ── Download do documento original ──────────────────────── */
+
 function downloadDoc(docId) {
   window.open(`/api/documentos/${docId}/original`, '_blank');
 }
 
-/* ============================================================
-   2. SELEÇÃO DE TEXTO → ANCORAGEM AO COMENTÁRIO
-   ============================================================ */
-
-/*
-  Fluxo:
-  1. Usuário seleciona texto em qualquer viewer.
-  2. Um tooltip flutuante aparece: "Anotar seleção".
-  3. Usuário clica no tooltip → o trecho vai para o formulário de comentário.
-  4. Usuário escreve e salva.
-*/
 
 document.addEventListener('mouseup', handleTextSelection);
 document.addEventListener('touchend', handleTextSelection);
@@ -204,7 +179,6 @@ function handleTextSelection(event) {
     return;
   }
 
-  /* Verifica se a seleção está dentro de um dos viewers */
   const inViewer =
     viewerLeft.contains(selection.anchorNode) ||
     viewerRight.contains(selection.anchorNode);
@@ -214,7 +188,6 @@ function handleTextSelection(event) {
     return;
   }
 
-  /* Posiciona o tooltip acima do cursor */
   const x = event.clientX || (event.changedTouches && event.changedTouches[0].clientX) || 0;
   const y = event.clientY || (event.changedTouches && event.changedTouches[0].clientY) || 0;
 
@@ -226,7 +199,6 @@ function showTooltip(x, y, text) {
   selectionTooltip.style.left = `${x - selectionTooltip.offsetWidth / 2}px`;
   selectionTooltip.style.top  = `${y - 44}px`;
 
-  /* Ao clicar no tooltip, ancora o trecho ao formulário */
   selectionTooltip.onclick = () => {
     anchorTrecho(text);
     hideTooltip();
@@ -239,17 +211,12 @@ function hideTooltip() {
   selectionTooltip.onclick = null;
 }
 
-/**
- * Coloca o trecho selecionado na area de preview do formulário.
- */
 function anchorTrecho(text) {
   state.trecho = text;
 
-  /* Trunca para exibição (o texto completo fica no state) */
   trechoText.textContent = text.length > 120 ? text.substring(0, 117) + '...' : text;
   trechoPreview.classList.add('visible');
 
-  /* Foca o textarea para o usuário começar a escrever */
   commentTextarea.focus();
 }
 
@@ -259,16 +226,12 @@ function clearTrecho() {
   trechoText.textContent = '';
 }
 
-/* Fechar tooltip se o usuário clicar fora */
 document.addEventListener('mousedown', e => {
   if (!selectionTooltip.contains(e.target)) {
     hideTooltip();
   }
 });
 
-/* ============================================================
-   3. CARREGAR COMENTÁRIOS (GET)
-   ============================================================ */
 
 async function loadComments() {
   try {
@@ -292,7 +255,6 @@ async function loadComments() {
  * @param {Array<Comentario>} comentarios
  */
 function renderComments(comentarios) {
-  /* Remove itens antigos (mantém o empty state) */
   commentList.querySelectorAll('.comment-item').forEach(el => el.remove());
 
   if (comentarios.length === 0) {
@@ -308,7 +270,6 @@ function renderComments(comentarios) {
     commentList.appendChild(buildCommentEl(c));
   });
 
-  /* Rola para o final */
   commentList.scrollTop = commentList.scrollHeight;
 }
 
@@ -339,9 +300,6 @@ function buildCommentEl(c) {
   return item;
 }
 
-/* ============================================================
-   4. ENVIAR COMENTÁRIO (POST)
-   ============================================================ */
 
 async function submitComment() {
   const texto = commentTextarea.value.trim();
@@ -353,7 +311,7 @@ async function submitComment() {
     return;
   }
 
-  /* Monta o payload conforme API_CONTRACT.md */
+
   const payload = {
     texto,
     trecho:    state.trecho || null,
@@ -374,7 +332,6 @@ async function submitComment() {
 
     const novo = await resp.json();
 
-    /* Atualiza UI imediatamente (optimistic update) */
     const el = buildCommentEl(novo);
     el.classList.add('new');
     commentEmpty.style.display = 'none';
@@ -382,7 +339,6 @@ async function submitComment() {
     commentList.scrollTop = commentList.scrollHeight;
     commentCount.textContent = commentList.querySelectorAll('.comment-item').length;
 
-    /* Limpa o formulário */
     commentTextarea.value = '';
     clearTrecho();
 
@@ -398,7 +354,6 @@ async function submitComment() {
   }
 }
 
-/* ── Atalho de teclado: Ctrl+Enter salva o comentário ─────── */
 commentTextarea.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     e.preventDefault();
@@ -406,13 +361,6 @@ commentTextarea.addEventListener('keydown', e => {
   }
 });
 
-/* ============================================================
-   UTILITÁRIOS
-   ============================================================ */
-
-/**
- * Escapa HTML para evitar XSS ao inserir dados do servidor no DOM.
- */
 function escHtml(str) {
   if (!str) return '';
   return str
@@ -423,9 +371,7 @@ function escHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-/**
- * Formata uma data ISO 8601 para o padrão "dd/MM HH:mm".
- */
+
 function formatDateTime(iso) {
   if (!iso) return '';
   try {
@@ -438,12 +384,8 @@ function formatDateTime(iso) {
   } catch { return ''; }
 }
 
-/* ============================================================
-   INICIALIZAÇÃO
-   ============================================================ */
 
 (async function init() {
-  /* Roda em paralelo: carrega os dois PDFs e os comentários */
   await Promise.all([
     initPdfViewer(API.minutaPdfUrl,        viewerLeft,  loadingLeft,  'left'),
     initPdfViewer(API.regularizacaoPdfUrl, viewerRight, loadingRight, 'right'),

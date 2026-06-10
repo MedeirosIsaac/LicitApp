@@ -3,31 +3,25 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title th:text="'LicitApp — Análise ' + ${contratacao.numero}">LicitApp — Análise</title>
+  <title th:text="'LicitApp — Análise ' + ${contratacao.numeroProcesso}">LicitApp — Análise</title>
   <link rel="stylesheet" th:href="@{/css/licitapp.css}"/>
 
-  <!--
-    PDF.js — renderização de PDF com camada de texto selecionável.
-    Versão fixada para estabilidade do projeto.
-  -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
-<!-- Dados do backend injetados como atributos data para o JS consumir -->
+
 <div id="app-data"
      th:attr="data-contratacao-id=${contratacao.id},
-              data-minuta-pdf-url=@{/api/documentos/{id}/pdf(id=${minuta.id})},
-              data-regularizacao-pdf-url=@{/api/documentos/{id}/pdf(id=${regularizacao.id})},
               data-comentarios-url=@{/api/documentos/{id}/comentarios(id=${minuta.id})}"
+     data-minuta-pdf-url="/pdfs/minuta.pdf"
+     data-regularizacao-pdf-url="/pdfs/aditivo.pdf"
      aria-hidden="true">
 </div>
 
 <div class="app">
 
-  <!-- ═══════════════════════════════════════════════════
-       SIDEBAR (idêntica ao dashboard)
-  ════════════════════════════════════════════════════ -->
   <nav class="sidebar" aria-label="Navegação principal">
     <div class="sidebar-brand">
       <div class="brand-icon" aria-hidden="true">LA</div>
@@ -80,12 +74,9 @@
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════
-       ÁREA PRINCIPAL
-  ════════════════════════════════════════════════════ -->
   <main class="main analise-page" id="main-content">
 
-    <!-- Topbar com breadcrumb -->
+
     <header class="topbar">
       <a href="/dashboard" class="topbar-btn" title="Voltar ao dashboard" aria-label="Voltar ao dashboard">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -93,16 +84,15 @@
       <div class="topbar-divider" aria-hidden="true"></div>
       <span class="topbar-sub">Contratações</span>
       <span class="topbar-sub" style="margin: 0 4px;" aria-hidden="true">/</span>
-      <span class="topbar-title" th:text="${contratacao.numero}">PE 000/2026</span>
+      <span class="topbar-title" th:text="${contratacao.numeroProcesso}">PE 000/2026</span>
 
       <div class="topbar-spacer"></div>
 
-      <!-- Status atual -->
+  
       <span th:if="${contratacao.status.name() == 'EM_ANALISE'}" class="badge badge-analise">Em Análise</span>
       <span th:if="${contratacao.status.name() == 'APROVADO'}"   class="badge badge-aprovado">Aprovado</span>
       <span th:if="${contratacao.status.name() == 'PENDENTE'}"   class="badge badge-pendente">Pendente</span>
 
-      <!-- Botão aprovar (somente analistas com permissão) -->
       <form th:action="@{/contratacoes/{id}/aprovar(id=${contratacao.id})}" method="post"
             style="display:inline;" th:if="${contratacao.status.name() == 'EM_ANALISE'}">
         <button type="submit" class="btn-primary" style="height:34px;">
@@ -116,7 +106,6 @@
       </button>
     </header>
 
-    <!-- Tab bar de documentos -->
     <div class="tab-bar" role="tablist" aria-label="Documentos do processo">
       <button class="tab-btn active" id="tab-minuta" role="tab" aria-selected="true" aria-controls="panel-minuta">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -129,21 +118,18 @@
 
       <div class="tab-spacer" aria-hidden="true"></div>
 
-      <!-- Badge do número do processo -->
-      <span class="processo-badge" th:text="${contratacao.numero}">PE 000/2026</span>
 
-      <!-- Empresa -->
+      <span class="processo-badge" th:text="${contratacao.numeroProcesso}">PE 000/2026</span>
+
+
       <span class="topbar-sub" style="font-size:11px; margin-left: 10px;"
-            th:text="${contratacao.empresa}">Empresa</span>
+            th:text="${contratacao.empresaLicitante}">Empresa</span>
     </div>
 
-    <!-- Corpo da análise -->
     <div class="analise-body">
 
-      <!-- ─── Painéis de documento ─── -->
       <div class="doc-panels">
 
-        <!-- PAINEL ESQUERDO — Minuta do Contrato (.docx → PDF) -->
         <section class="doc-panel" id="panel-minuta" role="tabpanel" aria-labelledby="tab-minuta">
           <div class="panel-header">
             <div class="panel-header-title">
@@ -165,17 +151,15 @@
             </div>
           </div>
 
-          <!-- Viewer do PDF gerado pelo backend (JODConverter) -->
           <div class="pdf-viewer" id="viewer-left">
             <div class="pdf-loading" id="loading-left" aria-live="polite">
               <div class="spinner" aria-hidden="true"></div>
               Convertendo documento...
             </div>
-            <!-- As páginas PDF são renderizadas aqui pelo analise.js -->
+
           </div>
         </section>
 
-        <!-- PAINEL DIREITO — Documentação de Regularização (PDF nativo) -->
         <section class="doc-panel" id="panel-regularizacao" role="tabpanel" aria-labelledby="tab-regularizacao">
           <div class="panel-header">
             <div class="panel-header-title">
@@ -205,9 +189,8 @@
           </div>
         </section>
 
-      </div><!-- /doc-panels -->
+      </div>
 
-      <!-- ─── Sidebar de Comentários ─── -->
       <aside class="comment-sidebar" aria-label="Comentários de análise">
         <div class="comment-sidebar-header">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -215,9 +198,7 @@
           <span class="comment-count-badge" id="comment-count" aria-label="Número de comentários">0</span>
         </div>
 
-        <!-- Lista de comentários — preenchida pelo JS via GET /comentarios -->
         <div class="comment-list" id="comment-list" aria-live="polite" aria-label="Lista de comentários">
-          <!-- Estado vazio inicial -->
           <div class="comment-empty" id="comment-empty">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             <p>Nenhum comentário ainda</p>
@@ -225,10 +206,9 @@
           </div>
         </div>
 
-        <!-- Formulário para novo comentário -->
         <div class="comment-form">
 
-          <!-- Preview do trecho selecionado (aparece ao selecionar texto no PDF) -->
+        
           <div class="comment-trecho-preview" id="trecho-preview" role="status">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
             <span id="trecho-text" style="flex:1; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"></span>
@@ -246,7 +226,6 @@
           ></textarea>
 
           <div class="comment-form-footer">
-            <!-- Selector de qual documento o comentário se refere -->
             <select class="doc-selector" id="doc-selector" aria-label="Documento referenciado">
               <option value="MINUTA">Minuta</option>
               <option value="REGULARIZACAO">Regularização</option>
@@ -260,17 +239,16 @@
         </div>
       </aside>
 
-    </div><!-- /analise-body -->
+    </div>
   </main>
 </div>
 
-<!-- Tooltip flutuante de seleção de texto -->
+
 <div class="selection-tooltip" id="selection-tooltip" role="tooltip" aria-live="assertive">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
   Anotar seleção
 </div>
 
-<!-- Script principal da análise -->
 <script th:src="@{/js/analise.js}"></script>
 <script th:src="@{/js/nav.js}"></script>
 </body>

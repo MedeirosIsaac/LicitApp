@@ -95,16 +95,13 @@
 
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════
-       CONTEÚDO PRINCIPAL
-  ════════════════════════════════════════════════════ -->
+
   <main class="main" id="main-content">
 
-    <!-- Topbar -->
+
     <header class="topbar">
       <h1 class="topbar-title">Banco de Contratações</h1>
       <div class="topbar-divider" aria-hidden="true"></div>
-      <!-- Total vem do model do controller -->
       <span class="topbar-sub" th:text="${contratacoes.size()} + ' processos ativos'">0 processos ativos</span>
 
       <div class="topbar-spacer"></div>
@@ -122,10 +119,8 @@
       </button>
     </header>
 
-    <!-- Área de conteúdo -->
     <div class="page">
 
-      <!-- Cards de estatísticas -->
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-label"><span class="stat-accent navy" aria-hidden="true"></span>Total de Processos</div>
@@ -149,7 +144,6 @@
         </div>
       </div>
 
-      <!-- Barra de filtros -->
       <div class="filter-bar">
         <select class="filter-select" id="filter-status" aria-label="Filtrar por status">
           <option value="">Todos os status</option>
@@ -184,71 +178,53 @@
         </a>
       </div>
 
-      <!-- Grid de Contratações — populado pelo Thymeleaf -->
       <div class="cards-grid" id="cards-grid">
 
-        <!--
-          th:each itera sobre a lista ${contratacoes} passada pelo Controller.
-          Cada objeto Contratacao deve ter os campos abaixo.
-          O atributo data-status alimenta as bordas coloridas via CSS.
-        -->
         <a th:each="c : ${contratacoes}"
            th:href="@{/analise/{id}(id=${c.id})}"
            class="contrato-card"
            th:attr="data-status=${c.status.name()},
                     data-modalidade=${c.modalidade.name()},
-                    data-empresa=${c.empresa}"
-           th:title="'Analisar ' + ${c.numero}">
+                    data-empresa=${c.empresaLicitante}"
+           th:title="'Analisar ' + ${c.numeroProcesso}">
 
-          <!-- Cabeçalho do card -->
           <div class="card-header">
-            <span class="card-num" th:text="${c.numero}">PE 000/2026</span>
-
-            <!-- Badge de status — condicional -->
+            <span class="card-num" th:text="${c.numeroProcesso}">PE 000/2026</span>
             <span th:if="${c.status.name() == 'EM_ANALISE'}"  class="badge badge-analise">Em Análise</span>
             <span th:if="${c.status.name() == 'APROVADO'}"    class="badge badge-aprovado">Aprovado</span>
             <span th:if="${c.status.name() == 'PENDENTE'}"    class="badge badge-pendente">Pendente</span>
           </div>
 
-          <!-- Dados da empresa -->
-          <div class="card-empresa" th:text="${c.empresa}">Nome da Empresa</div>
-          <div class="card-desc"    th:text="${c.descricao}">Descrição do objeto</div>
+          <div class="card-empresa" th:text="${c.empresaLicitante}">Nome da Empresa</div>
+          <div class="card-desc"    th:text="${c.objeto}">Descrição do objeto</div>
 
           <div class="card-divider" aria-hidden="true"></div>
 
-          <!-- Metadados -->
           <div class="card-meta">
             <div class="card-meta-row">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-              <span th:text="${c.modalidadeDescricao}">Modalidade</span>
+              <span th:text="${c.modalidade.descricao}">Modalidade</span>
             </div>
             <div class="card-meta-row">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-              <!-- Formata o valor como moeda BRL no servidor ou com Thymeleaf -->
-              <span th:text="${#numbers.formatCurrency(c.valor)}">R$ 0,00</span>
+              <span th:text="${#numbers.formatCurrency(c.valorEstimado)}">R$ 0,00</span>
             </div>
           </div>
 
-          <!-- Rodapé -->
           <div class="card-footer">
-            <span class="card-date"
-                  th:text="'Atualizado: ' + ${#temporals.format(c.dataAtualizacao, 'dd MMM yyyy')}">
-              Atualizado: --
-            </span>
+            <span class="card-date">Atualizado recentemente</span>
             <span class="card-link">
               Analisar
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </span>
           </div>
-
         </a>
 
-        <!-- Estado vazio — exibido quando não há contratações -->
         <div th:if="${#lists.isEmpty(contratacoes)}"
              style="grid-column: 1/-1; text-align: center; padding: 60px 24px; color: var(--gray-400);">
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" style="margin: 0 auto 12px; display:block; color: var(--gray-300);" aria-hidden="true"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
           <p style="font-size:14px; font-weight:500; margin-bottom:4px;">Nenhuma contratação encontrada</p>
-          <p style="font-size:12px;">Tente ajustar os filtros ou <a th:href="@{/contratacoes/novo}" style="color:var(--navy-400)">adicione um novo processo</a>.</p>
+          <p style="font-size:12px;">Tente ajustar os filtros ou adicione um novo processo.</p>
         </div>
 
       </div>
@@ -256,9 +232,7 @@
   </main>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCRIPTS
-════════════════════════════════════════════════════ -->
+
 <script>
   /* ── Filtro client-side em tempo real ── */
   const searchInput   = document.getElementById('search-input');

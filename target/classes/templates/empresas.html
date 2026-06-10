@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LicitApp — Empresas</title>
+  <link rel="stylesheet" th:href="@{/css/licitapp.css}"/>
+</head>
+<body>
+
+<!-- ── Macro de ícone SVG inline para não repetir código ── -->
+
+<div class="app">
+
+  <!-- ══════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════ -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">LA</div>
+      <div>
+        <div class="brand-name">LicitApp</div>
+        <span class="brand-sub">Controle Interno</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Menu</div>
+
+      
+      <a href="/dashboard" class="nav-item">Dashboard</a>
+
+      <a href="/analise.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Contratações
+      </a>
+      <a href="/empresas.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Empresas
+      </a>
+      <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Relatórios
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Tipos de Documento</div>
+      <a href="#" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Aditivos</a>
+      <a href="#" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Apostilamento</a>
+      <a href="#" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>SebraeTec</a>
+      <a href="#" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>SFG</a>
+      <a href="#" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Contrato</a>
+      <a href="#" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Outros</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar">IC</div>
+        <div>
+          <div class="user-name">Isaac Costa</div>
+          <div class="user-role">Analista CI</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       CONTEÚDO PRINCIPAL
+  ═══════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <h1 class="topbar-title">Empresas Licitantes</h1>
+      <div class="topbar-divider"></div>
+      <span class="topbar-sub" id="count-label">8 empresas cadastradas</span>
+      <div class="topbar-spacer"></div>
+
+      <div class="search-bar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar empresa ou CNPJ..." id="search-input"/>
+      </div>
+
+      <button class="topbar-btn" title="Notificações">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </button>
+      <button class="topbar-btn" title="Configurações">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </header>
+
+    <div class="page">
+
+      <!-- Estatísticas rápidas -->
+      <div class="stats-row" style="margin-bottom: 20px;">
+        <div class="stat-card">
+          <div class="stat-label"><span class="stat-accent navy"></span>Total de Empresas</div>
+          <div class="stat-value">8</div>
+          <div class="stat-meta">cadastradas no sistema</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><span class="stat-accent green"></span>Situação Regular</div>
+          <div class="stat-value">5</div>
+          <div class="stat-meta">todas certidões válidas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><span class="stat-accent amber"></span>Atenção</div>
+          <div class="stat-value">2</div>
+          <div class="stat-meta">certidão vence em breve</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><span class="stat-accent red"></span>Irregulares</div>
+          <div class="stat-value">1</div>
+          <div class="stat-meta">certidão vencida</div>
+        </div>
+      </div>
+
+      <!-- Toolbar de filtros -->
+      <div class="empresas-toolbar">
+        <select class="filter-select" id="filter-situacao">
+          <option value="">Todas as situações</option>
+          <option value="REGULAR">Regular</option>
+          <option value="ATENCAO">Atenção</option>
+          <option value="IRREGULAR">Irregular</option>
+        </select>
+
+        <select class="filter-select" id="filter-porte">
+          <option value="">Todos os portes</option>
+          <option value="ME">Micro Empresa (ME)</option>
+          <option value="EPP">Pequeno Porte (EPP)</option>
+          <option value="MEDIO">Médio Porte</option>
+          <option value="GRANDE">Grande Porte</option>
+        </select>
+
+        <div class="filter-spacer"></div>
+
+        <button class="btn-secondary" onclick="exportarEmpresas()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar
+        </button>
+
+        <button class="btn-primary" onclick="abrirModalNova()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nova Empresa
+        </button>
+      </div>
+
+      <!-- Tabela de empresas -->
+      <div class="table-wrap">
+        <table class="data-table" id="tabela-empresas">
+          <thead>
+            <tr>
+              <th onclick="sortTable('empresa')" class="sorted">
+                Empresa <span class="sort-icon">↕</span>
+              </th>
+              <th onclick="sortTable('situacao')">
+                Situação <span class="sort-icon">↕</span>
+              </th>
+              <th onclick="sortTable('porte')">
+                Porte <span class="sort-icon">↕</span>
+              </th>
+              <th>Certidão Federal</th>
+              <th>Certidão Municipal</th>
+              <th>FGTS</th>
+              <th>Processos</th>
+              <th style="text-align:right; width:60px;"></th>
+            </tr>
+          </thead>
+          <tbody id="tabela-body">
+            <!-- preenchido pelo JS -->
+          </tbody>
+        </table>
+
+        <div class="table-footer">
+          <span id="tabela-info">Exibindo 8 de 8 empresas</span>
+          <div class="pagination">
+            <button class="page-btn" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page -->
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL DE DETALHE DA EMPRESA
+═══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="fecharModal(event)">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">TechNorte Soluções Ltda.</div>
+        <div class="modal-sub" id="modal-cnpj">32.941.002/0001-85</div>
+      </div>
+      <button class="modal-close" onclick="fecharModalBtn()" aria-label="Fechar">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Situação geral -->
+      <div style="display:flex; align-items:center; gap:10px; padding: 12px 0; border-bottom: 1px solid var(--gray-100);">
+        <span id="modal-badge" class="badge badge-regular">Regular</span>
+        <span id="modal-porte" style="font-size:12px; color:var(--gray-500);">Médio Porte</span>
+        <span style="margin-left:auto; font-size:11px; color:var(--gray-400);">
+          <strong id="modal-processos-count" style="color:var(--gray-700);">3</strong> processo(s) ativo(s)
+        </span>
+      </div>
+
+      <!-- Certidões -->
+      <div class="modal-section-title">Certidões de Regularidade Fiscal</div>
+      <div class="cert-grid" id="modal-certidoes">
+        <!-- preenchido pelo JS -->
+      </div>
+
+      <!-- Processos vinculados -->
+      <div class="modal-section-title">Processos Vinculados</div>
+      <div id="modal-processos" style="display:flex; flex-direction:column; gap:6px;">
+        <!-- preenchido pelo JS -->
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModalBtn()">Fechar</button>
+      <a href="/dashboard" class="btn-primary" id="modal-ver-processos">
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   DADOS MOCKADOS — em produção virão via
+   GET /api/empresas (Spring Boot)
+════════════════════════════════════════════ */
+const EMPRESAS = [
+  {
+    id: 1,
+    nome: 'TechNorte Soluções Ltda.',
+    cnpj: '32.941.002/0001-85',
+    situacao: 'ATENCAO',
+    porte: 'MEDIO',
+    porteLabel: 'Médio Porte',
+    certFederal:   { validade: '2026-09-15', ok: true },
+    certEstadual:  { validade: '2026-08-30', ok: true },
+    certMunicipal: { validade: '2026-06-12', ok: false, atencao: true },
+    certFGTS:      { validade: '2026-07-20', ok: true },
+    certTrabalhista: { validade: '2026-08-08', ok: true },
+    processos: [
+      { numero: 'PE 042/2026', status: 'EM_ANALISE', valor: 'R$ 1.250.400,00' },
+    ]
+  },
+  {
+    id: 2,
+    nome: 'Construtora Horizonte Verde',
+    cnpj: '18.773.041/0001-22',
+    situacao: 'REGULAR',
+    porte: 'MEDIO',
+    porteLabel: 'Médio Porte',
+    certFederal:   { validade: '2026-10-20', ok: true },
+    certEstadual:  { validade: '2026-09-14', ok: true },
+    certMunicipal: { validade: '2026-11-01', ok: true },
+    certFGTS:      { validade: '2026-09-05', ok: true },
+    certTrabalhista: { validade: '2026-10-12', ok: true },
+    processos: [
+      { numero: 'DL 012/2026', status: 'APROVADO', valor: 'R$ 45.200,00' },
+    ]
+  },
+  {
+    id: 3,
+    nome: 'Alimentos & Cia Logística',
+    cnpj: '09.214.885/0001-67',
+    situacao: 'REGULAR',
+    porte: 'GRANDE',
+    porteLabel: 'Grande Porte',
+    certFederal:   { validade: '2026-12-01', ok: true },
+    certEstadual:  { validade: '2026-11-28', ok: true },
+    certMunicipal: { validade: '2026-10-10', ok: true },
+    certFGTS:      { validade: '2026-12-15', ok: true },
+    certTrabalhista: { validade: '2026-11-05', ok: true },
+    processos: [
+      { numero: 'CP 005/2026', status: 'PENDENTE', valor: 'R$ 3.840.000,00' },
+    ]
+  },
+  {
+    id: 4,
+    nome: 'Transportes Expressos S.A.',
+    cnpj: '44.102.987/0001-33',
+    situacao: 'REGULAR',
+    porte: 'EPP',
+    porteLabel: 'Pequeno Porte (EPP)',
+    certFederal:   { validade: '2026-08-18', ok: true },
+    certEstadual:  { validade: '2026-09-22', ok: true },
+    certMunicipal: { validade: '2026-10-30', ok: true },
+    certFGTS:      { validade: '2026-08-25', ok: true },
+    certTrabalhista: { validade: '2026-09-14', ok: true },
+    processos: [
+      { numero: 'PE 009/2026', status: 'EM_ANALISE', valor: 'R$ 215.000,00' },
+    ]
+  },
+  {
+    id: 5,
+    nome: 'Papelaria Central de Gestão',
+    cnpj: '07.556.312/0001-90',
+    situacao: 'REGULAR',
+    porte: 'ME',
+    porteLabel: 'Micro Empresa (ME)',
+    certFederal:   { validade: '2026-07-10', ok: true },
+    certEstadual:  { validade: '2026-08-15', ok: true },
+    certMunicipal: { validade: '2026-09-20', ok: true },
+    certFGTS:      { validade: '2026-07-28', ok: true },
+    certTrabalhista: { validade: '2026-08-01', ok: true },
+    processos: [
+      { numero: 'DL 015/2026', status: 'APROVADO', valor: 'R$ 12.900,00' },
+    ]
+  },
+  {
+    id: 6,
+    nome: 'Limp-Bem Serviços Gerais',
+    cnpj: '23.448.771/0001-14',
+    situacao: 'IRREGULAR',
+    porte: 'EPP',
+    porteLabel: 'Pequeno Porte (EPP)',
+    certFederal:   { validade: '2026-05-01', ok: false, atencao: false },
+    certEstadual:  { validade: '2026-06-10', ok: false, atencao: true },
+    certMunicipal: { validade: '2026-07-14', ok: true },
+    certFGTS:      { validade: '2026-05-20', ok: false, atencao: false },
+    certTrabalhista: { validade: '2026-08-09', ok: true },
+    processos: [
+      { numero: 'PE 040/2026', status: 'EM_ANALISE', valor: 'R$ 890.000,00' },
+    ]
+  },
+  {
+    id: 7,
+    nome: 'Arquiteta Urbana Projetos',
+    cnpj: '51.229.004/0001-55',
+    situacao: 'REGULAR',
+    porte: 'ME',
+    porteLabel: 'Micro Empresa (ME)',
+    certFederal:   { validade: '2026-10-05', ok: true },
+    certEstadual:  { validade: '2026-09-18', ok: true },
+    certMunicipal: { validade: '2026-11-22', ok: true },
+    certFGTS:      { validade: '2026-10-01', ok: true },
+    certTrabalhista: { validade: '2026-09-30', ok: true },
+    processos: [
+      { numero: 'CP 003/2026', status: 'APROVADO', valor: 'R$ 138.400,00' },
+    ]
+  },
+  {
+    id: 8,
+    nome: 'Sigma Engenharia e Obras',
+    cnpj: '38.114.629/0001-08',
+    situacao: 'ATENCAO',
+    porte: 'GRANDE',
+    porteLabel: 'Grande Porte',
+    certFederal:   { validade: '2026-06-18', ok: false, atencao: true },
+    certEstadual:  { validade: '2026-10-11', ok: true },
+    certMunicipal: { validade: '2026-08-25', ok: true },
+    certFGTS:      { validade: '2026-09-12', ok: true },
+    certTrabalhista: { validade: '2026-11-04', ok: true },
+    processos: [
+      { numero: 'DL 020/2026', status: 'EM_ANALISE', valor: 'R$ 420.000,00' },
+      { numero: 'PE 033/2026', status: 'APROVADO',   valor: 'R$ 980.000,00' },
+    ]
+  },
+];
+
+/* ════════════════════════════════════════════
+   UTILITÁRIOS
+════════════════════════════════════════════ */
+
+const TODAY = new Date('2026-06-05');
+const DIAS_ATENCAO = 30; // certidão vence em ≤30 dias → atenção
+
+function diasParaVencer(dataStr) {
+  const d = new Date(dataStr);
+  return Math.ceil((d - TODAY) / (1000 * 60 * 60 * 24));
+}
+
+function formatDate(dataStr) {
+  const [y, m, d] = dataStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function certClass(cert) {
+  const dias = diasParaVencer(cert.validade);
+  if (dias < 0)              return 'cert-vencida';
+  if (dias <= DIAS_ATENCAO)  return 'cert-atencao';
+  return 'cert-ok';
+}
+
+function certLabel(cert) {
+  const dias = diasParaVencer(cert.validade);
+  if (dias < 0)             return `Vencida (${formatDate(cert.validade)})`;
+  if (dias <= DIAS_ATENCAO) return `Vence em ${dias}d (${formatDate(cert.validade)})`;
+  return `Válida até ${formatDate(cert.validade)}`;
+}
+
+function situacaoClass(s) {
+  return { REGULAR: 'badge-regular', ATENCAO: 'badge-atencao', IRREGULAR: 'badge-irregular' }[s] || '';
+}
+
+function situacaoLabel(s) {
+  return { REGULAR: 'Regular', ATENCAO: 'Atenção', IRREGULAR: 'Irregular' }[s] || s;
+}
+
+function statusClass(s) {
+  return { EM_ANALISE: 'badge-analise', APROVADO: 'badge-aprovado', PENDENTE: 'badge-pendente' }[s] || '';
+}
+
+function statusLabel(s) {
+  return { EM_ANALISE: 'Em Análise', APROVADO: 'Aprovado', PENDENTE: 'Pendente' }[s] || s;
+}
+
+/* ════════════════════════════════════════════
+   RENDERIZAÇÃO DA TABELA
+════════════════════════════════════════════ */
+
+let dadosFiltrados = [...EMPRESAS];
+
+function renderTabela(dados) {
+  const tbody = document.getElementById('tabela-body');
+  tbody.innerHTML = '';
+
+  dados.forEach(e => {
+    const tr = document.createElement('tr');
+    tr.dataset.id = e.id;
+    tr.setAttribute('role', 'button');
+    tr.setAttribute('tabindex', '0');
+    tr.setAttribute('aria-label', `Ver detalhes de ${e.nome}`);
+    tr.onclick = () => abrirModal(e.id);
+    tr.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') abrirModal(e.id); };
+
+    tr.innerHTML = `
+      <td>
+        <div class="td-empresa-nome">${e.nome}</div>
+        <div class="td-empresa-cnpj">${e.cnpj}</div>
+      </td>
+      <td><span class="badge ${situacaoClass(e.situacao)}">${situacaoLabel(e.situacao)}</span></td>
+      <td style="font-size:12px; color:var(--gray-500);">${e.porteLabel}</td>
+      <td><span class="${certClass(e.certFederal)}">${certLabel(e.certFederal)}</span></td>
+      <td><span class="${certClass(e.certMunicipal)}">${certLabel(e.certMunicipal)}</span></td>
+      <td><span class="${certClass(e.certFGTS)}">${certLabel(e.certFGTS)}</span></td>
+      <td style="font-size:12px; text-align:center;">
+        <span style="font-weight:600; color:var(--gray-700);">${e.processos.length}</span>
+      </td>
+      <td style="text-align:right;">
+        <button onclick="event.stopPropagation(); abrirModal(${e.id})" 
+                style="background:none;border:none;cursor:pointer;color:var(--navy-400);display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;"
+                aria-label="Detalhes de ${e.nome}">
+          Detalhes
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('tabela-info').textContent =
+    `Exibindo ${dados.length} de ${EMPRESAS.length} empresa${EMPRESAS.length !== 1 ? 's' : ''}`;
+  document.getElementById('count-label').textContent =
+    `${EMPRESAS.length} empresa${EMPRESAS.length !== 1 ? 's' : ''} cadastrada${EMPRESAS.length !== 1 ? 's' : ''}`;
+}
+
+/* ════════════════════════════════════════════
+   FILTROS
+════════════════════════════════════════════ */
+
+function applyFilters() {
+  const q   = document.getElementById('search-input').value.toLowerCase();
+  const sit = document.getElementById('filter-situacao').value;
+  const por = document.getElementById('filter-porte').value;
+
+  dadosFiltrados = EMPRESAS.filter(e => {
+    const matchQ   = !q   || e.nome.toLowerCase().includes(q) || e.cnpj.includes(q);
+    const matchSit = !sit || e.situacao === sit;
+    const matchPor = !por || e.porte === por;
+    return matchQ && matchSit && matchPor;
+  });
+
+  renderTabela(dadosFiltrados);
+}
+
+document.getElementById('search-input').addEventListener('input', applyFilters);
+document.getElementById('filter-situacao').addEventListener('change', applyFilters);
+document.getElementById('filter-porte').addEventListener('change', applyFilters);
+
+/* ════════════════════════════════════════════
+   MODAL DE DETALHE
+════════════════════════════════════════════ */
+
+function abrirModal(id) {
+  const e = EMPRESAS.find(x => x.id === id);
+  if (!e) return;
+
+  document.getElementById('modal-title').textContent = e.nome;
+  document.getElementById('modal-cnpj').textContent  = e.cnpj;
+  document.getElementById('modal-porte').textContent = e.porteLabel;
+  document.getElementById('modal-processos-count').textContent = e.processos.length;
+
+  /* Badge de situação */
+  const badge = document.getElementById('modal-badge');
+  badge.className = `badge ${situacaoClass(e.situacao)}`;
+  badge.textContent = situacaoLabel(e.situacao);
+
+  /* Certidões */
+  const certs = [
+    { label: 'Certidão Federal (Receita)', cert: e.certFederal },
+    { label: 'Certidão Estadual (RN)',     cert: e.certEstadual },
+    { label: 'Certidão Municipal',         cert: e.certMunicipal },
+    { label: 'FGTS (Caixa Econômica)',     cert: e.certFGTS },
+    { label: 'Débitos Trabalhistas (TST)', cert: e.certTrabalhista },
+  ];
+
+  const certsEl = document.getElementById('modal-certidoes');
+  certsEl.innerHTML = certs.map(c => {
+    const cls   = certClass(c.cert);
+    const label = certLabel(c.cert);
+    const icon  = cls === 'cert-ok'
+      ? `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--status-aprovado-border)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+      : cls === 'cert-atencao'
+      ? `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--status-analise-border)" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--status-pendente-border)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+
+    return `
+      <div class="cert-card">
+        <div class="cert-card-label">${c.label}</div>
+        <div class="cert-card-value ${cls}" style="display:flex;align-items:center;gap:5px;">
+          ${icon} ${cls === 'cert-vencida' ? 'Vencida' : cls === 'cert-atencao' ? 'Atenção' : 'Regular'}
+        </div>
+        <div class="cert-card-date">${label}</div>
+      </div>
+    `;
+  }).join('');
+
+  /* Processos vinculados */
+  const procEl = document.getElementById('modal-processos');
+  procEl.innerHTML = e.processos.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r-md);">
+      <span style="font-size:12px;font-weight:600;color:var(--gray-700);">${p.numero}</span>
+      <span class="badge ${statusClass(p.status)}">${statusLabel(p.status)}</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--gray-500);">${p.valor}</span>
+    </div>
+  `).join('');
+
+  /* Abre o modal */
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.querySelector('.modal').focus?.();
+}
+
+function fecharModalBtn() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+}
+
+function fecharModal(e) {
+  if (e.target === document.getElementById('modal-backdrop')) fecharModalBtn();
+}
+
+/* Fecha com ESC */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') fecharModalBtn();
+});
+
+/* ════════════════════════════════════════════
+   ORDENAÇÃO DA TABELA
+════════════════════════════════════════════ */
+
+let sortKey = 'empresa';
+let sortAsc = true;
+
+function sortTable(key) {
+  if (sortKey === key) sortAsc = !sortAsc;
+  else { sortKey = key; sortAsc = true; }
+
+  document.querySelectorAll('.data-table th').forEach(th => th.classList.remove('sorted'));
+  event.currentTarget.classList.add('sorted');
+
+  dadosFiltrados.sort((a, b) => {
+    let va, vb;
+    if (key === 'empresa')  { va = a.nome;     vb = b.nome; }
+    if (key === 'situacao') { va = a.situacao;  vb = b.situacao; }
+    if (key === 'porte')    { va = a.porte;     vb = b.porte; }
+    const cmp = String(va).localeCompare(String(vb), 'pt-BR');
+    return sortAsc ? cmp : -cmp;
+  });
+
+  renderTabela(dadosFiltrados);
+}
+
+/* ════════════════════════════════════════════
+   EXPORTAR (stub para futuro endpoint)
+════════════════════════════════════════════ */
+function exportarEmpresas() {
+  alert('Em produção, este botão chama GET /api/empresas/exportar e baixa um .xlsx.');
+}
+
+function abrirModalNova() {
+  alert('Em produção, abre o formulário de cadastro de nova empresa.');
+}
+
+/* ── Inicializa ── */
+renderTabela(EMPRESAS);
+</script>
+
+<!-- JS de transições compartilhado -->
+<script th:src="@{/js/nav.js}"></script>
+
+</body>
+</html>
