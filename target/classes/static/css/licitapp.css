@@ -1206,3 +1206,36 @@ body {
   opacity: 1;
   pointer-events: all; /* Bloqueia os cliques do usuário durante a transição */
 }
+
+/* Fix — garante que o panel-header seja visível */
+.panel-header {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--gray-100);
+  background: var(--white);
+  flex-shrink: 0;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+/* Fix — impede que o pdf-viewer empurre o panel-header para fora */
+.doc-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.doc-panels {
+  min-height: 0;
+}
+
+.analise-body {
+  min-height: 0;
+}

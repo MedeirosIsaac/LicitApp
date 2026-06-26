@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title th:text="'LicitApp — Análise ' + ${contratacao.numeroProcesso}">LicitApp — Análise</title>
   <link rel="stylesheet" th:href="@{/css/licitapp.css}"/>
-
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
-
+<!-- Dados injetados pelo Thymeleaf para o analise.js -->
 <div id="app-data"
      th:attr="data-contratacao-id=${contratacao.id},
-              data-comentarios-url=@{/api/documentos/{id}/comentarios(id=${minuta.id})}"
-     data-minuta-pdf-url="/pdfs/minuta.pdf"
-     data-regularizacao-pdf-url="/pdfs/aditivo.pdf"
+              data-minuta-id=${minuta.id},
+              data-regularizacao-id=${regularizacao.id},
+              data-comentarios-url=@{/api/documentos/{id}/comentarios(id=${minuta.id})},
+              data-minuta-pdf-url='/pdfs/minuta.pdf',
+              data-regularizacao-pdf-url='/pdfs/aditivo.pdf'"
      aria-hidden="true">
 </div>
 
@@ -53,12 +53,12 @@
 
     <div class="nav-section">
       <div class="nav-label">Tipos de Documento</div>
-      <a th:href="@{/licitacoes(tipo=ADITIVO)}"       class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Aditivos</a>
-      <a th:href="@{/licitacoes(tipo=APOSTILAMENTO)}"  class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Apostilamento</a>
-      <a th:href="@{/licitacoes(tipo=SEBRAE_TEC)}"     class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>SebraeTec</a>
-      <a th:href="@{/licitacoes(tipo=SFG)}"            class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>SFG</a>
-      <a th:href="@{/licitacoes(tipo=CONTRATO)}"       class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Contrato</a>
-      <a th:href="@{/licitacoes(tipo=OUTROS)}"         class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Outros</a>
+      <a th:href="@{/licitacoes(tipo=ADITIVO)}"      class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Aditivos</a>
+      <a th:href="@{/licitacoes(tipo=APOSTILAMENTO)}" class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Apostilamento</a>
+      <a th:href="@{/licitacoes(tipo=SEBRAE_TEC)}"    class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>SebraeTec</a>
+      <a th:href="@{/licitacoes(tipo=SFG)}"           class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>SFG</a>
+      <a th:href="@{/licitacoes(tipo=CONTRATO)}"      class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Contrato</a>
+      <a th:href="@{/licitacoes(tipo=OUTROS)}"        class="folder-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Outros</a>
     </div>
 
     <div class="sidebar-footer">
@@ -76,7 +76,6 @@
 
   <main class="main analise-page" id="main-content">
 
-
     <header class="topbar">
       <a href="/dashboard" class="topbar-btn" title="Voltar ao dashboard" aria-label="Voltar ao dashboard">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -88,7 +87,6 @@
 
       <div class="topbar-spacer"></div>
 
-  
       <span th:if="${contratacao.status.name() == 'EM_ANALISE'}" class="badge badge-analise">Em Análise</span>
       <span th:if="${contratacao.status.name() == 'APROVADO'}"   class="badge badge-aprovado">Aprovado</span>
       <span th:if="${contratacao.status.name() == 'PENDENTE'}"   class="badge badge-pendente">Pendente</span>
@@ -101,9 +99,11 @@
         </button>
       </form>
 
-      <button class="topbar-btn" title="Exportar relatório de análise" aria-label="Exportar análise">
+      <!-- Botão exportar desta análise específica -->
+      <a th:href="@{/contratacoes/exportar}" class="topbar-btn"
+         title="Exportar todas as contratações" aria-label="Exportar JSON">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
+      </a>
     </header>
 
     <div class="tab-bar" role="tablist" aria-label="Documentos do processo">
@@ -115,14 +115,9 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         Regularização Fiscal
       </button>
-
       <div class="tab-spacer" aria-hidden="true"></div>
-
-
       <span class="processo-badge" th:text="${contratacao.numeroProcesso}">PE 000/2026</span>
-
-
-      <span class="topbar-sub" style="font-size:11px; margin-left: 10px;"
+      <span class="topbar-sub" style="font-size:11px; margin-left:10px;"
             th:text="${contratacao.empresaLicitante}">Empresa</span>
     </div>
 
@@ -136,27 +131,21 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               Minuta do Contrato
             </div>
-            <span class="panel-type-tag">convertido de .docx</span>
+            <span class="panel-type-tag" th:text="${minuta.nomeArquivo != null ? minuta.nomeArquivo : 'sem documento'}">minuta.pdf</span>
             <div class="panel-actions">
-              <button class="panel-btn" onclick="zoomIn('left')" title="Aumentar zoom" aria-label="Aumentar zoom painel esquerdo">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              </button>
-              <button class="panel-btn" onclick="zoomOut('left')" title="Diminuir zoom" aria-label="Diminuir zoom painel esquerdo">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              </button>
-              <button class="panel-btn" title="Baixar original" aria-label="Baixar documento original"
-                      th:attr="onclick='downloadDoc(' + ${minuta.id} + ')'">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <button class="panel-btn" onclick="zoomIn('left')" title="Aumentar zoom"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+              <button class="panel-btn" onclick="zoomOut('left')" title="Diminuir zoom"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+              <button class="panel-btn" title="Baixar original"
+                      th:attr="onclick='downloadDoc(\'' + ${minuta.id} + '\''  + ')'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               </button>
             </div>
           </div>
-
           <div class="pdf-viewer" id="viewer-left">
             <div class="pdf-loading" id="loading-left" aria-live="polite">
               <div class="spinner" aria-hidden="true"></div>
               Convertendo documento...
             </div>
-
           </div>
         </section>
 
@@ -166,21 +155,16 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.75" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               Regularização Fiscal
             </div>
-            <span class="panel-type-tag">documentação física</span>
+            <span class="panel-type-tag" th:text="${regularizacao.nomeArquivo != null ? regularizacao.nomeArquivo : 'sem documento'}">regularizacao.pdf</span>
             <div class="panel-actions">
-              <button class="panel-btn" onclick="zoomIn('right')" title="Aumentar zoom" aria-label="Aumentar zoom painel direito">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              </button>
-              <button class="panel-btn" onclick="zoomOut('right')" title="Diminuir zoom" aria-label="Diminuir zoom painel direito">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              </button>
-              <button class="panel-btn" title="Baixar documento" aria-label="Baixar documento de regularização"
-                      th:attr="onclick='downloadDoc(' + ${regularizacao.id} + ')'">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <button class="panel-btn" onclick="zoomIn('right')" title="Aumentar zoom"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+              <button class="panel-btn" onclick="zoomOut('right')" title="Diminuir zoom"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+              <button class="panel-btn" title="Baixar documento"
+                      th:attr="onclick='downloadDoc(\'' + ${regularizacao.id} + '\'' + ')'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               </button>
             </div>
           </div>
-
           <div class="pdf-viewer" id="viewer-right">
             <div class="pdf-loading" id="loading-right" aria-live="polite">
               <div class="spinner" aria-hidden="true"></div>
@@ -207,8 +191,6 @@
         </div>
 
         <div class="comment-form">
-
-        
           <div class="comment-trecho-preview" id="trecho-preview" role="status">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
             <span id="trecho-text" style="flex:1; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"></span>
@@ -217,20 +199,15 @@
             </button>
           </div>
 
-          <textarea
-            class="comment-textarea"
-            id="comment-textarea"
-            placeholder="Escreva sua análise ou observação..."
-            rows="3"
-            aria-label="Texto do comentário"
-          ></textarea>
+          <textarea class="comment-textarea" id="comment-textarea"
+                    placeholder="Escreva sua análise ou observação..." rows="3"
+                    aria-label="Texto do comentário"></textarea>
 
           <div class="comment-form-footer">
             <select class="doc-selector" id="doc-selector" aria-label="Documento referenciado">
               <option value="MINUTA">Minuta</option>
               <option value="REGULARIZACAO">Regularização</option>
             </select>
-
             <button class="btn-salvar" id="btn-salvar" onclick="submitComment()" aria-label="Salvar comentário">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               Salvar
@@ -242,7 +219,6 @@
     </div>
   </main>
 </div>
-
 
 <div class="selection-tooltip" id="selection-tooltip" role="tooltip" aria-live="assertive">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>

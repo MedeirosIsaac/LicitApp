@@ -5,13 +5,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 const appData = document.getElementById('app-data').dataset;
 
-// PDFs de exemplo públicos — substitua pelas URLs reais quando tiver upload
-const PDF_PLACEHOLDER =
-  'https://www.w3.org/WAI/WCAG21/Techniques/pdf/PDF1/table.pdf';
-
 const API = {
-  minutaPdfUrl:        appData.minutaPdfUrl        || PDF_PLACEHOLDER,
-  regularizacaoPdfUrl: appData.regularizacaoPdfUrl || PDF_PLACEHOLDER,
+  minutaPdfUrl:        appData.minutaPdfUrl        || '/pdfs/minuta.pdf',
+  regularizacaoPdfUrl: appData.regularizacaoPdfUrl || '/pdfs/aditivo.pdf',
   comentariosUrl:      appData.comentariosUrl,
 };
 
@@ -25,17 +21,17 @@ const state = {
 
 const $ = id => document.getElementById(id);
 
-const viewerLeft      = $('viewer-left');
-const viewerRight     = $('viewer-right');
-const loadingLeft     = $('loading-left');
-const loadingRight    = $('loading-right');
-const commentList     = $('comment-list');
-const commentEmpty    = $('comment-empty');
-const commentCount    = $('comment-count');
-const commentTextarea = $('comment-textarea');
-const trechoPreview   = $('trecho-preview');
-const trechoText      = $('trecho-text');
-const btnSalvar       = $('btn-salvar');
+const viewerLeft       = $('viewer-left');
+const viewerRight      = $('viewer-right');
+const loadingLeft      = $('loading-left');
+const loadingRight     = $('loading-right');
+const commentList      = $('comment-list');
+const commentEmpty     = $('comment-empty');
+const commentCount     = $('comment-count');
+const commentTextarea  = $('comment-textarea');
+const trechoPreview    = $('trecho-preview');
+const trechoText       = $('trecho-text');
+const btnSalvar        = $('btn-salvar');
 const selectionTooltip = $('selection-tooltip');
 
 // ── PDF Viewer ────────────────────────────────────────────────────────────────
@@ -43,8 +39,11 @@ const selectionTooltip = $('selection-tooltip');
 async function initPdfViewer(pdfUrl, container, loading, side) {
   try {
     const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+
+    // Guarda referência ANTES de renderizar — resolve o bug do zoom
     if (side === 'left')  state.pdfLeft  = pdf;
     if (side === 'right') state.pdfRight = pdf;
+
     loading.style.display = 'none';
     await renderAllPages(pdf, container, getScale(side));
     return pdf;
@@ -77,6 +76,8 @@ async function renderAllPages(pdf, container, scale) {
     const canvasWrap = document.createElement('div');
     canvasWrap.className = 'pdf-canvas-wrap';
     canvasWrap.style.position = 'relative';
+    // Necessário para o PDF.js renderizar a textLayer corretamente
+    canvasWrap.style.setProperty('--scale-factor', scale);
 
     const canvas  = document.createElement('canvas');
     const context = canvas.getContext('2d');
@@ -103,13 +104,20 @@ async function renderAllPages(pdf, container, scale) {
     await page.render({ canvasContext: context, viewport }).promise;
 
     const textContent = await page.getTextContent();
-    pdfjsLib.renderTextLayer({ textContent, container: textLayerDiv, viewport, textDivs: [] });
+    pdfjsLib.renderTextLayer({
+      textContentSource: textContent,
+      container: textLayerDiv,
+      viewport,
+      textDivs: [],
+    });
   }
 }
 
 function getScale(side) {
   return side === 'left' ? state.scaleLeft : state.scaleRight;
 }
+
+// ── Zoom ─────────────────────────────────────────────────────────────────────
 
 async function zoomIn(side) {
   if (side === 'left') {
@@ -131,8 +139,16 @@ async function zoomOut(side) {
   }
 }
 
-function downloadDoc(docId) {
-  window.open(`/api/documentos/${docId}/original`, '_blank');
+// ── Download — baixa o PDF que está sendo exibido ────────────────────────────
+
+function downloadDoc(side) {
+  const url = side === 'left' ? API.minutaPdfUrl : API.regularizacaoPdfUrl;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = side === 'left' ? 'minuta.pdf' : 'regularizacao.pdf';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 // ── Seleção de texto ──────────────────────────────────────────────────────────
@@ -198,19 +214,16 @@ async function loadComments() {
     renderComments(await resp.json());
   } catch (err) {
     console.warn('[LicitApp] Comentários não carregados:', err.message);
-    // Falha silenciosa — API pode não estar ligada ainda
   }
 }
 
 function renderComments(comentarios) {
   commentList.querySelectorAll('.comment-item').forEach(el => el.remove());
-
   if (!comentarios || comentarios.length === 0) {
     commentEmpty.style.display = '';
     commentCount.textContent = '0';
     return;
   }
-
   commentEmpty.style.display = 'none';
   commentCount.textContent = comentarios.length;
   comentarios.forEach(c => commentList.appendChild(buildCommentEl(c)));
@@ -222,9 +235,9 @@ function buildCommentEl(c) {
   item.className = 'comment-item';
   item.dataset.id = c.id || '';
 
-  const dateFmt = formatDateTime(c.dataCriacao || c.criadoEm);
+  const dateFmt  = formatDateTime(c.dataCriacao || c.criadoEm);
   const iniciais = c.autorIniciais || (c.autor ? c.autor.substring(0, 2).toUpperCase() : 'UC');
-  const docTag = (c.documento === 'REGULARIZACAO')
+  const docTag   = (c.documento === 'REGULARIZACAO')
     ? '<span style="font-size:9px;color:var(--status-aprovado-text);background:var(--status-aprovado-bg);padding:1px 6px;border-radius:4px;margin-left:4px;">Reg.</span>'
     : '';
 
@@ -260,48 +273,42 @@ async function submitComment() {
   btnSalvar.textContent = 'Salvando...';
 
   try {
-    // Tenta salvar na API
     if (API.comentariosUrl) {
       const resp = await fetch(API.comentariosUrl, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(payload),
       });
-
       if (resp.ok) {
-        const novo = await resp.json();
-        appendComment(novo);
+        appendComment(await resp.json());
         commentTextarea.value = '';
         clearTrecho();
         return;
       }
     }
 
-    // Fallback local — funciona mesmo sem API ligada
-    const comentarioLocal = {
+    // Fallback local
+    appendComment({
       id:          Date.now().toString(),
       texto:       payload.texto,
       trecho:      payload.trecho,
       autor:       payload.autor,
       documento:   payload.documento,
       dataCriacao: new Date().toISOString(),
-    };
-    appendComment(comentarioLocal);
+    });
     commentTextarea.value = '';
     clearTrecho();
 
   } catch (err) {
-    console.warn('[LicitApp] Usando fallback local:', err.message);
-    // Mesmo em erro de rede, salva localmente na sessão
-    const comentarioLocal = {
+    console.warn('[LicitApp] Fallback local:', err.message);
+    appendComment({
       id:          Date.now().toString(),
       texto:       payload.texto,
       trecho:      payload.trecho,
       autor:       payload.autor,
       documento:   payload.documento,
       dataCriacao: new Date().toISOString(),
-    };
-    appendComment(comentarioLocal);
+    });
     commentTextarea.value = '';
     clearTrecho();
   } finally {
@@ -345,7 +352,7 @@ function escHtml(str) {
 function formatDateTime(iso) {
   if (!iso) return '';
   try {
-    const d = new Date(iso);
+    const d  = new Date(iso);
     const dd = String(d.getDate()).padStart(2, '0');
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const HH = String(d.getHours()).padStart(2, '0');
@@ -354,12 +361,11 @@ function formatDateTime(iso) {
   } catch { return ''; }
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ── Init — sequencial para garantir que state.pdfLeft/Right sejam preenchidos
+//    antes de qualquer clique de zoom ──────────────────────────────────────────
 
 (async function init() {
-  await Promise.all([
-    initPdfViewer(API.minutaPdfUrl,        viewerLeft,  loadingLeft,  'left'),
-    initPdfViewer(API.regularizacaoPdfUrl, viewerRight, loadingRight, 'right'),
-    loadComments(),
-  ]);
+  await initPdfViewer(API.minutaPdfUrl,        viewerLeft,  loadingLeft,  'left');
+  await initPdfViewer(API.regularizacaoPdfUrl, viewerRight, loadingRight, 'right');
+  loadComments();
 })();

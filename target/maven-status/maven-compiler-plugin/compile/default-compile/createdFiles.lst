@@ -1,0 +1,8 @@
+licitApp\MainController$UsuarioLogado.class
+licitApp\service\ContratacaoService.class
+licitApp\ApiController.class
+licitApp\repository\ContratacaoRepository.class
+licitApp\ApiController$ErroResposta.class
+licitApp\DataLoader.class
+licitApp\repository\ContratacaoRepository$1.class
+licitApp\service\ContratacaoService$DashboardStats.class

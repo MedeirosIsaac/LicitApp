@@ -1,0 +1,46 @@
+[ {
+  "id" : "b2c041dc-d638-4b44-a856-9b088ac17c00",
+  "numeroProcesso" : "PE 002/004",
+  "empresaLicitante" : "Empresa",
+  "objeto" : "Contratação",
+  "modalidade" : "DISPENSA_LICITACAO",
+  "status" : "APROVADO",
+  "valorEstimado" : 100.0,
+  "documentos" : [ ]
+}, {
+  "id" : "2ee9536d-6663-4143-9ee6-67bebb33c5bd",
+  "numeroProcesso" : "PE 002/2026",
+  "empresaLicitante" : "Empresa",
+  "objeto" : "Descreva",
+  "modalidade" : "DISPENSA_LICITACAO",
+  "status" : "APROVADO",
+  "valorEstimado" : 100.0,
+  "documentos" : [ ]
+}, {
+  "id" : "bb969d49-097e-48bc-8f1c-d11ca677336e",
+  "numeroProcesso" : "PE 002/005",
+  "empresaLicitante" : "Empresa Jr",
+  "objeto" : "Contratação",
+  "modalidade" : "CONCORRENCIA_PUBLICA",
+  "status" : "PENDENTE",
+  "valorEstimado" : 200.0,
+  "documentos" : [ ]
+}, {
+  "id" : "c6b109d7-7baa-4a4f-8ee8-27039a09d82b",
+  "numeroProcesso" : "PE 004/2027",
+  "empresaLicitante" : "Empresa senior",
+  "objeto" : "Objeto",
+  "modalidade" : "PREGAO_ELETRONICO",
+  "status" : "APROVADO",
+  "valorEstimado" : 300.0,
+  "documentos" : [ ]
+}, {
+  "id" : "63b83fdb-bf87-4dc6-9f51-63aee3307fa3",
+  "numeroProcesso" : "PE 004/2027",
+  "empresaLicitante" : "Empresa senior",
+  "objeto" : "objetivo",
+  "modalidade" : "PREGAO_ELETRONICO",
+  "status" : "APROVADO",
+  "valorEstimado" : 500.0,
+  "documentos" : [ ]
+} ]
