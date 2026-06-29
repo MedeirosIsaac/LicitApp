@@ -15,6 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Controller
 public class MainController {
@@ -25,20 +28,18 @@ public class MainController {
         this.service = service;
     }
 
+    // ── Redireciona raiz e /dashboard para /licitacoes ────────────────────────
+    @GetMapping("/")
+    public String raiz() {
+        return "redirect:/licitacoes";
+    }
+
     @GetMapping("/dashboard")
-    public String abrirDashboard(Model model) {
-        model.addAttribute("usuario", new UsuarioLogado("Isaac", "Costa", "Analista CI"));
-        model.addAttribute("stats", service.calcularStats());
-        model.addAttribute("contratacoes", service.listarTodas());
-        return "dashboard";
+    public String dashboard() {
+        return "redirect:/licitacoes";
     }
 
-    @GetMapping("/empresas")
-    public String abrirEmpresas(Model model) {
-        model.addAttribute("usuario", new UsuarioLogado("Isaac", "Costa", "Analista CI"));
-        return "empresas";
-    }
-
+    // ── Tela principal de Contratações ──────────────────────
     @GetMapping("/licitacoes")
     public String abrirLicitacoes(Model model) {
         model.addAttribute("usuario", new UsuarioLogado("Isaac", "Costa", "Analista CI"));
@@ -47,6 +48,36 @@ public class MainController {
         return "dashboard";
     }
 
+    // ── Empresas (AGORA DINÂMICA) ─────────────────────────────────────────────
+    @GetMapping("/empresas")
+    public String abrirEmpresas(Model model) {
+        model.addAttribute("usuario", new UsuarioLogado("Isaac", "Costa", "Analista CI"));
+
+        // 1. Puxa todos os contratos
+        List<Contratacao> todas = service.listarTodas();
+
+        // 2. Agrupa os contratos pelo nome da empresa (ignora contratos sem empresa)
+        Map<String, List<Contratacao>> contratosPorEmpresa = todas.stream()
+                .filter(c -> c.getEmpresaLicitante() != null && !c.getEmpresaLicitante().isBlank())
+                .collect(Collectors.groupingBy(Contratacao::getEmpresaLicitante));
+
+        // 3. Transforma o grupo em um Resumo com a soma dos valores
+        List<EmpresaResumo> empresas = contratosPorEmpresa.entrySet().stream()
+                .map(entry -> {
+                    String nome = entry.getKey();
+                    List<Contratacao> lista = entry.getValue();
+                    // Soma o valor de todos os contratos dessa empresa
+                    double total = lista.stream().mapToDouble(Contratacao::getValorEstimado).sum();
+                    return new EmpresaResumo(nome, lista.size(), total, lista);
+                })
+                .toList();
+
+        // Envia a lista agrupada para o HTML
+        model.addAttribute("empresas", empresas);
+        return "empresas"; 
+    }
+
+    // ── Relatórios ────────────────────────────────────────────────────────────
     @GetMapping("/relatorios")
     public String abrirRelatorios(Model model) {
         model.addAttribute("usuario", new UsuarioLogado("Isaac", "Costa", "Analista CI"));
@@ -60,6 +91,11 @@ public class MainController {
 
         Contratacao contratacao = service.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Contratação não encontrada: " + id));
+        
+        if (contratacao.getStatus().name().equals("PENDENTE")) {
+            contratacao.setStatus(StatusContratacao.EM_ANALISE);
+            service.salvar(contratacao);    
+        }
 
         model.addAttribute("contratacao", contratacao);
 
@@ -83,6 +119,7 @@ public class MainController {
         return "analise";
     }
 
+    // ── Aprovar contratação ───────────────────────────────────────────────────
     @PostMapping("/contratacoes/{id}/aprovar")
     public String aprovarContratacao(@PathVariable String id) {
         service.buscarPorId(id).ifPresent(c -> {
@@ -92,15 +129,14 @@ public class MainController {
         return "redirect:/analise/" + id;
     }
 
+    // ── Novo Processo ─────────────────────────────────────────────────────────
     @GetMapping("/contratacoes/novo")
     public String novaContratacao(Model model) {
         model.addAttribute("usuario", new UsuarioLogado("Isaac", "Costa", "Analista CI"));
         return "nova-contratacao";
     }
 
-    /**
-     * Exportar — retorna arquivo JSON para download, com indentação legível.
-     */
+    // ── Exportar JSON ─────────────────────────────────────────────────────────
     @GetMapping("/contratacoes/exportar")
     public ResponseEntity<byte[]> exportar() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -108,8 +144,7 @@ public class MainController {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        List<Contratacao> lista = service.listarTodas();
-        byte[] json = mapper.writeValueAsBytes(lista);
+        byte[] json = mapper.writeValueAsBytes(service.listarTodas());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"contratacoes.json\"")
@@ -117,6 +152,7 @@ public class MainController {
                 .body(json);
     }
 
+    // ── Tratamento de erros ───────────────────────────────────────────────────
     @ExceptionHandler(RuntimeException.class)
     public String handleError(RuntimeException ex, Model model) {
         model.addAttribute("mensagem", ex.getMessage());
@@ -124,4 +160,7 @@ public class MainController {
     }
 
     record UsuarioLogado(String nome, String sobrenome, String perfil) {}
+    
+    // Novo record para enviar os dados agrupados da empresa para a tela
+    public record EmpresaResumo(String nome, int qtdContratos, double valorTotal, List<Contratacao> contratos) {}
 }

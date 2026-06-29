@@ -1239,3 +1239,152 @@ body {
 .analise-body {
   min-height: 0;
 }
+
+/* ============================================================
+   PÁGINA DE EMPRESAS E MODAL
+   ============================================================ */
+.empresa-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empresa-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--navy-200);
+}
+
+.empresa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.empresa-logo-box {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-md);
+  background: var(--navy-50);
+  color: var(--navy-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  border: 1px solid var(--navy-100);
+}
+
+.empresa-nome { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.empresa-cnpj { font-size: 11px; color: var(--gray-500); }
+
+.empresa-stats {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px dashed var(--gray-200);
+  font-size: 11px;
+  color: var(--gray-500);
+}
+.empresa-stats strong { color: var(--navy-800); font-size: 13px; }
+
+/* ── MODAL (Janela Flutuante) ── */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(4, 13, 24, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+
+.modal-content {
+  background: var(--white);
+  width: 100%;
+  max-width: 500px;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  transform: translateY(20px);
+  transition: transform 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gray-50);
+}
+
+.modal-title { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+.btn-close {
+  background: none; border: none; cursor: pointer; color: var(--gray-500);
+  display: flex; align-items: center; justify-content: center; padding: 4px;
+}
+.btn-close:hover { color: var(--gray-900); }
+
+.modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+
+.contrato-lista-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--r-md);
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+.contrato-lista-item:hover { background: var(--gray-50); border-color: var(--gray-300); }
+.cli-num { font-size: 13px; font-weight: 600; color: var(--navy-800); }
+.cli-obj { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* ============================================================
+   ANIMAÇÃO DA SIDEBAR (MODO LEITURA / TELA DE ANÁLISE)
+   ============================================================ */
+.sidebar {
+  transition: width 0.3s ease, min-width 0.3s ease;
+}
+
+/* Prepara os textos e menus para desaparecerem suavemente */
+.brand-text, .nav-section, .sidebar-footer {
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* O que acontece quando clicamos no botão */
+body.sidebar-collapsed .sidebar {
+  width: 72px; /* Encolhe deixando espaço apenas para o botão quadrado */
+  min-width: 72px;
+}
+
+/* Esconde todos os textos, deixando apenas o botão visível */
+body.sidebar-collapsed .brand-text,
+body.sidebar-collapsed .nav-section,
+body.sidebar-collapsed .sidebar-footer {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}

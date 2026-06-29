@@ -367,5 +367,5 @@ function formatDateTime(iso) {
 (async function init() {
   await initPdfViewer(API.minutaPdfUrl,        viewerLeft,  loadingLeft,  'left');
   await initPdfViewer(API.regularizacaoPdfUrl, viewerRight, loadingRight, 'right');
-  loadComments();
+  //loadComments();
 })();

@@ -33,6 +33,11 @@ public class ContratacaoService {
             throw new IllegalArgumentException("O número do processo é obrigatório.");
         if (contratacao.getEmpresaLicitante() == null || contratacao.getEmpresaLicitante().isBlank())
             throw new IllegalArgumentException("O nome da empresa licitante é obrigatório.");
+
+        if (contratacao.getStatus() == null) {
+            contratacao.setStatus(licitApp.enums.StatusContratacao.PENDENTE);
+        }
+        
         return repository.save(contratacao);
     }
 

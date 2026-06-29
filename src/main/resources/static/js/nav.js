@@ -69,6 +69,13 @@
   document.addEventListener('DOMContentLoaded', () => {
     setActiveNav();
     initTransitions();
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        // Liga ou desliga a classe no body
+        document.body.classList.toggle('sidebar-collapsed');
+      });
+    }
   });
 
 })();

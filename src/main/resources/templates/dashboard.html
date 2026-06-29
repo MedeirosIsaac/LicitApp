@@ -3,19 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LicitApp — Dashboard</title>
+  <title>LicitApp — Contratações</title>
   <link rel="stylesheet" th:href="@{/css/licitapp.css}"/>
 </head>
 <body>
 
 <div class="app">
 
-  <!-- ═══════════════════════════════════════════════════
-       SIDEBAR DE NAVEGAÇÃO
-  ════════════════════════════════════════════════════ -->
   <nav class="sidebar" aria-label="Navegação principal">
-
-    <!-- Marca -->
     <div class="sidebar-brand">
       <div class="brand-icon" aria-hidden="true">LA</div>
       <div>
@@ -24,16 +19,10 @@
       </div>
     </div>
 
-    <!-- Menu principal -->
     <div class="nav-section">
       <div class="nav-label">Menu</div>
 
-      <a href="/dashboard" class="nav-item active">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        Dashboard
-      </a>
-
-      <a href="/licitacoes" class="nav-item">
+      <a href="/licitacoes" class="nav-item active">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         Contratações
       </a>
@@ -49,41 +38,9 @@
       </a>
     </div>
 
-    <!-- Pastas por tipo -->
-    <div class="nav-section">
-      <div class="nav-label">Tipos de Documento</div>
-
-      <a th:href="@{/licitacoes(tipo=ADITIVO)}" class="folder-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        Aditivos
-      </a>
-      <a th:href="@{/licitacoes(tipo=APOSTILAMENTO)}" class="folder-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        Apostilamento
-      </a>
-      <a th:href="@{/licitacoes(tipo=SEBRAE_TEC)}" class="folder-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        SebraeTec
-      </a>
-      <a th:href="@{/licitacoes(tipo=SFG)}" class="folder-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        SFG
-      </a>
-      <a th:href="@{/licitacoes(tipo=CONTRATO)}" class="folder-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        Contrato
-      </a>
-      <a th:href="@{/licitacoes(tipo=OUTROS)}" class="folder-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        Outros
-      </a>
-    </div>
-
-    <!-- Usuário logado -->
     <div class="sidebar-footer">
       <div class="user-card">
         <div class="user-avatar" aria-hidden="true">
-          <!-- Iniciais vindas do backend via Thymeleaf Security -->
           <span th:text="${#strings.substring(usuario.nome, 0, 1) + #strings.substring(usuario.sobrenome, 0, 1)}">UC</span>
         </div>
         <div>
@@ -92,12 +49,9 @@
         </div>
       </div>
     </div>
-
   </nav>
 
-
   <main class="main" id="main-content">
-
 
     <header class="topbar">
       <h1 class="topbar-title">Banco de Contratações</h1>
@@ -155,15 +109,21 @@
         <select class="filter-select" id="filter-modalidade" aria-label="Filtrar por modalidade">
           <option value="">Todas as modalidades</option>
           <option value="PREGAO_ELETRONICO">Pregão Eletrônico</option>
-          <option value="DISPENSA">Dispensa de Licitação</option>
+          <option value="DISPENSA_LICITACAO">Dispensa de Licitação</option>
           <option value="CONCORRENCIA_PUBLICA">Concorrência Pública</option>
         </select>
 
         <select class="filter-select" id="filter-ano" aria-label="Filtrar por ano"
                 th:with="anoAtual=${#dates.year(#dates.createNow())}">
-          <option th:value="${anoAtual}" th:text="${anoAtual}" selected="selected">2026</option>
+          <option value="">Todos os anos</option>
+          <option th:value="${anoAtual}" th:text="${anoAtual}">2026</option>
           <option th:value="${anoAtual - 1}" th:text="${anoAtual - 1}">2025</option>
         </select>
+
+        <button class="btn-secondary" id="btn-limpar" title="Limpar todos os filtros" style="height: 34px; gap: 4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpar Filtros
+        </button>
 
         <div class="filter-spacer"></div>
 
@@ -185,7 +145,8 @@
            class="contrato-card"
            th:attr="data-status=${c.status.name()},
                     data-modalidade=${c.modalidade.name()},
-                    data-empresa=${c.empresaLicitante}"
+                    data-empresa=${c.empresaLicitante},
+                    data-ano=${c.dataProcesso != null and c.dataProcesso.length() >= 4 ? #strings.substring(c.dataProcesso,0,4) : ''}"
            th:title="'Analisar ' + ${c.numeroProcesso}">
 
           <div class="card-header">
@@ -193,6 +154,7 @@
             <span th:if="${c.status.name() == 'EM_ANALISE'}"  class="badge badge-analise">Em Análise</span>
             <span th:if="${c.status.name() == 'APROVADO'}"    class="badge badge-aprovado">Aprovado</span>
             <span th:if="${c.status.name() == 'PENDENTE'}"    class="badge badge-pendente">Pendente</span>
+            <span th:if="${c.status.name() == 'REJEITADO'}"   class="badge badge-pendente">Rejeitado</span>
           </div>
 
           <div class="card-empresa" th:text="${c.empresaLicitante}">Nome da Empresa</div>
@@ -212,7 +174,14 @@
           </div>
 
           <div class="card-footer">
-            <span class="card-date">Atualizado recentemente</span>
+            <span class="card-date" 
+                  th:text="${c.dataProcesso != null and c.dataProcesso.length() == 10 ? 
+                           #strings.substring(c.dataProcesso,8,10) + '/' + 
+                           #strings.substring(c.dataProcesso,5,7) + '/' + 
+                           #strings.substring(c.dataProcesso,0,4) : 'Sem data'}">
+              29/06/2026
+            </span>
+            
             <span class="card-link">
               Analisar
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -224,7 +193,7 @@
              style="grid-column: 1/-1; text-align: center; padding: 60px 24px; color: var(--gray-400);">
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" style="margin: 0 auto 12px; display:block; color: var(--gray-300);" aria-hidden="true"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
           <p style="font-size:14px; font-weight:500; margin-bottom:4px;">Nenhuma contratação encontrada</p>
-          <p style="font-size:12px;">Tente ajustar os filtros ou adicione um novo processo.</p>
+          <p style="font-size:12px;">Tente ajustar os filtros ou <a th:href="@{/contratacoes/novo}" style="color:var(--navy-400)">adicione um novo processo</a>.</p>
         </div>
 
       </div>
@@ -232,36 +201,48 @@
   </main>
 </div>
 
-
 <script>
-  /* ── Filtro client-side em tempo real ── */
-  const searchInput   = document.getElementById('search-input');
-  const filterStatus  = document.getElementById('filter-status');
-  const filterMod     = document.getElementById('filter-modalidade');
-  const cards         = document.querySelectorAll('.contrato-card');
+  const searchInput  = document.getElementById('search-input');
+  const filterStatus = document.getElementById('filter-status');
+  const filterMod    = document.getElementById('filter-modalidade');
+  const filterAno    = document.getElementById('filter-ano');
+  const btnLimpar    = document.getElementById('btn-limpar');
+  const cards        = document.querySelectorAll('.contrato-card');
 
   function applyFilters() {
     const q          = searchInput.value.toLowerCase();
     const status     = filterStatus.value;
     const modalidade = filterMod.value;
+    const ano        = filterAno.value;
 
     cards.forEach(card => {
-      const empresa    = (card.dataset.empresa    || '').toLowerCase();
-      const cardStatus = card.dataset.status      || '';
-      const cardMod    = card.dataset.modalidade  || '';
+      const empresa    = (card.dataset.empresa   || '').toLowerCase();
+      const cardStatus = card.dataset.status     || '';
+      const cardMod    = card.dataset.modalidade || '';
+      const cardAno    = card.dataset.ano        || '';
       const num        = (card.querySelector('.card-num')?.textContent || '').toLowerCase();
 
-      const matchSearch = !q || empresa.includes(q) || num.includes(q);
-      const matchStatus = !status     || cardStatus === status;
-      const matchMod    = !modalidade || cardMod    === modalidade;
+      const ok = (!q        || empresa.includes(q) || num.includes(q))
+              && (!status   || cardStatus === status)
+              && (!modalidade || cardMod === modalidade)
+              && (!ano        || cardAno === ano);
 
-      card.style.display = (matchSearch && matchStatus && matchMod) ? '' : 'none';
+      card.style.display = ok ? '' : 'none';
     });
   }
 
-  searchInput.addEventListener('input',  applyFilters);
+  btnLimpar.addEventListener('click', () => {
+    searchInput.value = '';
+    filterStatus.value = '';
+    filterMod.value = '';
+    filterAno.value = ''; 
+    applyFilters();
+  });
+
+  searchInput.addEventListener('input',   applyFilters);
   filterStatus.addEventListener('change', applyFilters);
-  filterMod.addEventListener('change',   applyFilters);
+  filterMod.addEventListener('change',    applyFilters);
+  filterAno.addEventListener('change',    applyFilters);
 </script>
 
 <script th:src="@{/js/nav.js}"></script>

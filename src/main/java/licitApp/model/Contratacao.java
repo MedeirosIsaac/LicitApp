@@ -12,6 +12,7 @@ public class Contratacao {
     private String numeroProcesso;
     private String empresaLicitante;
     private String objeto;
+    private String dataProcesso;
     private Modalidade modalidade;
     private StatusContratacao status;
     private double valorEstimado;
@@ -109,6 +110,14 @@ public class Contratacao {
 
     public void setDocumentos(List<Documento> documentos) {
         this.documentos = documentos;
+    }
+
+    public String getDataProcesso() {
+        return dataProcesso;
+    }
+
+    public void setDataProcesso(String dataProcesso) {
+        this.dataProcesso = dataProcesso;
     }
 
     @Override
