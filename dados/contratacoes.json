@@ -5,7 +5,7 @@
   "objeto" : "Software de alto desempenho",
   "dataProcesso" : "2026-01-22",
   "modalidade" : "DISPENSA_LICITACAO",
-  "status" : "EM_ANALISE",
+  "status" : "APROVADO",
   "valorEstimado" : 10000.0,
   "documentos" : [ ]
 }, {
@@ -15,7 +15,7 @@
   "objeto" : "Reforma de um orgão",
   "dataProcesso" : "2025-04-02",
   "modalidade" : "CONCORRENCIA_PUBLICA",
-  "status" : "PENDENTE",
+  "status" : "EM_ANALISE",
   "valorEstimado" : 500000.0,
   "documentos" : [ ]
 }, {
@@ -27,5 +27,15 @@
   "modalidade" : "DISPENSA_LICITACAO",
   "status" : "APROVADO",
   "valorEstimado" : 30000.0,
+  "documentos" : [ ]
+}, {
+  "id" : "130d1084-7379-4eda-b4bf-de6817ef861c",
+  "numeroProcesso" : "PE 000/2026",
+  "empresaLicitante" : "Metropole Digital",
+  "objeto" : "Aplicação WEB",
+  "dataProcesso" : "2026-06-29",
+  "modalidade" : "DISPENSA_LICITACAO",
+  "status" : "EM_ANALISE",
+  "valorEstimado" : 20000.0,
   "documentos" : [ ]
 } ]
