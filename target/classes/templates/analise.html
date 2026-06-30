@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'LicitApp — Análise ' + ${contratacao.numeroProcesso}">LicitApp — Análise</title>
+  <link rel="stylesheet" th:href="@{/css/licitapp.css}"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+<div id="app-data"
+     th:attr="data-contratacao-id=${contratacao.id},
+              data-minuta-pdf-url='/pdfs/minuta.pdf',
+              data-regularizacao-pdf-url='/pdfs/aditivo.pdf',
+              data-comentarios-url=@{/api/documentos/{id}/comentarios(id=${minuta.id})}"
+     aria-hidden="true">
+</div>
+
+<div class="app">
+
+  <nav class="sidebar" aria-label="Navegação principal">
+    <div class="sidebar-brand">
+      <button class="brand-icon" id="toggle-sidebar" title="Recolher Menu" aria-label="Recolher Menu" style="cursor: pointer; border: none; padding: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      
+      <div class="brand-text">
+        <div class="brand-name">LicitApp</div>
+        <span class="brand-sub">Controle Interno</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Menu</div>
+
+      <a href="/licitacoes" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Contratações
+      </a>
+
+      <a href="/empresas" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Empresas
+      </a>
+
+      <a href="/relatorios" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Relatórios
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" aria-hidden="true">
+          <span th:text="${#strings.substring(usuario.nome,0,1) + #strings.substring(usuario.sobrenome,0,1)}">UC</span>
+        </div>
+        <div>
+          <div class="user-name" th:text="${usuario.nome + ' ' + usuario.sobrenome}">Usuário</div>
+          <div class="user-role" th:text="${usuario.perfil}">Analista</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main analise-page" id="main-content">
+
+    <header class="topbar">
+      <a href="/licitacoes" class="topbar-btn" title="Voltar às contratações" aria-label="Voltar às contratações">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </a>
+      <div class="topbar-divider" aria-hidden="true"></div>
+      <span class="topbar-sub">Contratações</span>
+      <span class="topbar-sub" style="margin: 0 4px;" aria-hidden="true">/</span>
+      <span class="topbar-title" th:text="${contratacao.numeroProcesso}">PE 000/2026</span>
+
+      <div class="topbar-spacer"></div>
+
+      <span th:if="${contratacao.status.name() == 'EM_ANALISE'}" class="badge badge-analise">Em Análise</span>
+      <span th:if="${contratacao.status.name() == 'APROVADO'}"   class="badge badge-aprovado">Aprovado</span>
+      <span th:if="${contratacao.status.name() == 'PENDENTE'}"   class="badge badge-pendente">Pendente</span>
+      <span th:if="${contratacao.status.name() == 'REJEITADO'}"  class="badge badge-pendente">Rejeitado</span>
+
+      <form th:action="@{/contratacoes/{id}/aprovar(id=${contratacao.id})}" method="post"
+            style="display:inline;"
+            th:if="${contratacao.status.name() == 'EM_ANALISE' || contratacao.status.name() == 'PENDENTE'}">
+        <button type="submit" class="btn-primary" style="height:34px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Aprovar
+        </button>
+      </form>
+
+      <button class="topbar-btn" title="Exportar análise" aria-label="Exportar análise">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </header>
+
+    <div class="tab-bar" role="tablist" aria-label="Documentos do processo">
+      <button class="tab-btn active" id="tab-minuta" role="tab" aria-selected="true" aria-controls="panel-minuta">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Minuta do Contrato
+      </button>
+      <button class="tab-btn" id="tab-regularizacao" role="tab" aria-selected="false" aria-controls="panel-regularizacao">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Regularização Fiscal
+      </button>
+
+      <div class="tab-spacer" aria-hidden="true"></div>
+      <span class="processo-badge" th:text="${contratacao.numeroProcesso}">PE 000/2026</span>
+      <span class="topbar-sub" style="font-size:11px; margin-left:10px;" th:text="${contratacao.empresaLicitante}">Empresa</span>
+    </div>
+
+    <div class="analise-body">
+
+      <div class="doc-panels">
+
+        <!-- Painel Esquerdo — Minuta -->
+        <section class="doc-panel" id="panel-minuta" role="tabpanel" aria-labelledby="tab-minuta">
+          <div class="panel-header">
+            <div class="panel-header-title">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Minuta do Contrato
+            </div>
+            <span class="panel-type-tag" th:text="${minuta.nomeArquivo}">documento.pdf</span>
+            <div class="panel-actions">
+              <button class="panel-btn" onclick="zoomIn('left')" title="Ampliar" aria-label="Ampliar painel esquerdo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="panel-btn" onclick="zoomOut('left')" title="Reduzir" aria-label="Reduzir painel esquerdo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="panel-btn" onclick="downloadDoc('left')" title="Baixar" aria-label="Baixar minuta">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="pdf-viewer" id="viewer-left">
+            <div class="pdf-loading" id="loading-left" aria-live="polite">
+              <div class="spinner" aria-hidden="true"></div>
+              Carregando documento...
+            </div>
+          </div>
+        </section>
+
+        <!-- Painel Direito — Regularização -->
+        <section class="doc-panel" id="panel-regularizacao" role="tabpanel" aria-labelledby="tab-regularizacao">
+          <div class="panel-header">
+            <div class="panel-header-title">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.75" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Regularização Fiscal
+            </div>
+            <span class="panel-type-tag" th:text="${regularizacao.nomeArquivo}">documento.pdf</span>
+            <div class="panel-actions">
+              <button class="panel-btn" onclick="zoomIn('right')" title="Ampliar" aria-label="Ampliar painel direito">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="panel-btn" onclick="zoomOut('right')" title="Reduzir" aria-label="Reduzir painel direito">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="panel-btn" onclick="downloadDoc('right')" title="Baixar" aria-label="Baixar regularização">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="pdf-viewer" id="viewer-right">
+            <div class="pdf-loading" id="loading-right" aria-live="polite">
+              <div class="spinner" aria-hidden="true"></div>
+              Carregando documento...
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Sidebar de Comentários -->
+      <aside class="comment-sidebar" aria-label="Comentários de análise">
+        <div class="comment-sidebar-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <h3>Comentários</h3>
+          <span class="comment-count-badge" id="comment-count" aria-label="Total de comentários">0</span>
+        </div>
+
+        <div class="comment-list" id="comment-list" aria-live="polite">
+          <div class="comment-empty" id="comment-empty">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <p>Nenhum comentário ainda</p>
+            <p style="color: var(--gray-300); font-size:11px;">Selecione um trecho para anotar</p>
+          </div>
+        </div>
+
+        <div class="comment-form">
+          <div class="comment-trecho-preview" id="trecho-preview" role="status">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+            <span id="trecho-text" style="flex:1; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"></span>
+            <button class="clear-trecho" onclick="clearTrecho()" aria-label="Remover trecho">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <textarea class="comment-textarea" id="comment-textarea"
+                    placeholder="Escreva sua análise ou observação... (Ctrl+Enter para salvar)"
+                    rows="3" aria-label="Texto do comentário"></textarea>
+
+          <div class="comment-form-footer">
+            <select class="doc-selector" id="doc-selector" aria-label="Documento referenciado">
+              <option value="MINUTA">Minuta</option>
+              <option value="REGULARIZACAO">Regularização</option>
+            </select>
+            <button class="btn-salvar" id="btn-salvar" onclick="submitComment()" aria-label="Salvar comentário">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Salvar
+            </button>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+</div>
+
+<div class="selection-tooltip" id="selection-tooltip" role="tooltip">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  Anotar seleção
+</div>
+
+<script th:src="@{/js/analise.js}"></script>
+<script th:src="@{/js/nav.js}"></script>
+
+<!-- Salvando Comentários -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const listaComentarios = document.getElementById('comment-list');
+    const idContrato = document.getElementById('app-data').getAttribute('data-contratacao-id');
+    const chaveMemoria = 'comentarios_salvos_' + idContrato;
+
+    const comentariosGuardados = localStorage.getItem(chaveMemoria);
+    if (comentariosGuardados) {
+        listaComentarios.innerHTML = comentariosGuardados;
+        // Atualiza o contador lá em cima
+        const qtd = document.querySelectorAll('.comment-item').length;
+        document.getElementById('comment-count').innerText = qtd;
+    }
+
+    const observer = new MutationObserver(() => {
+        localStorage.setItem(chaveMemoria, listaComentarios.innerHTML);
+        const qtd = document.querySelectorAll('.comment-item').length;
+        document.getElementById('comment-count').innerText = qtd;
+    });
+    
+    if (listaComentarios) {
+        observer.observe(listaComentarios, { childList: true, subtree: true });
+    }
+  });
+</script>
+
+</body>
+</html>

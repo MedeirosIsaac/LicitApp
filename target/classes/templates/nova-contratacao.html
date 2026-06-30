@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LicitApp — Novo Processo</title>
+  <link rel="stylesheet" th:href="@{/css/licitapp.css}"/>
+</head>
+<body>
+
+<div class="app">
+
+  <nav class="sidebar" aria-label="Navegação principal">
+    <div class="sidebar-brand">
+      <div class="brand-icon" aria-hidden="true">LA</div>
+      <div>
+        <div class="brand-name">LicitApp</div>
+        <span class="brand-sub">Controle Interno</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Menu</div>
+
+      <a href="/licitacoes" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Contratações
+      </a>
+
+      <a href="/empresas" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Empresas
+      </a>
+
+      <a href="/relatorios" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Relatórios
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" aria-hidden="true">
+          <span th:text="${#strings.substring(usuario.nome,0,1) + #strings.substring(usuario.sobrenome,0,1)}">UC</span>
+        </div>
+        <div>
+          <div class="user-name" th:text="${usuario.nome + ' ' + usuario.sobrenome}">Usuário</div>
+          <div class="user-role" th:text="${usuario.perfil}">Analista</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main" id="main-content">
+
+    <header class="topbar">
+      <a href="/licitacoes" class="topbar-btn" title="Voltar" aria-label="Voltar às contratações">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </a>
+      <div class="topbar-divider" aria-hidden="true"></div>
+      <span class="topbar-sub">Contratações</span>
+      <span class="topbar-sub" style="margin: 0 4px;" aria-hidden="true">/</span>
+      <h1 class="topbar-title">Novo Processo</h1>
+    </header>
+
+    <div class="page" style="max-width: 720px; margin: 0 auto; padding: 32px 24px;">
+
+      <div class="stat-card" style="padding: 32px;">
+
+        <h2 style="font-size: 15px; font-weight: 600; color: var(--gray-800); margin-bottom: 24px;">
+          Dados da Contratação
+        </h2>
+
+        <div id="form-erro"
+             style="display:none; background: var(--status-pendente-bg); border: 1px solid var(--status-pendente-border);
+                    color: var(--status-pendente-text); border-radius: var(--r-md);
+                    padding: 10px 14px; margin-bottom: 20px; font-size: 13px;"
+             role="alert"></div>
+
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+
+          <div class="form-group">
+            <label for="numeroProcesso" class="form-label">
+              Número do Processo <span style="color:var(--status-pendente-text)">*</span>
+            </label>
+            <input type="text" id="numeroProcesso" class="form-input" placeholder="Ex: PE 001/2026" required/>
+          </div>
+
+          <div class="form-group">
+            <label for="empresaLicitante" class="form-label">
+              Empresa Licitante <span style="color:var(--status-pendente-text)">*</span>
+            </label>
+            <input type="text" id="empresaLicitante" class="form-input" placeholder="Razão social da empresa" required/>
+          </div>
+
+          <div class="form-group">
+            <label for="objeto" class="form-label">
+              Objeto da Contratação <span style="color:var(--status-pendente-text)">*</span>
+            </label>
+            <textarea id="objeto" class="form-input" rows="3"
+                      placeholder="Descreva o que está sendo contratado..."
+                      style="resize: vertical;"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+
+            <div class="form-group">
+              <label for="modalidade" class="form-label">
+                Modalidade <span style="color:var(--status-pendente-text)">*</span>
+              </label>
+              <select id="modalidade" class="filter-select" style="width:100%; height: 38px;">
+                <option value="">Selecione...</option>
+                <option value="PREGAO_ELETRONICO">Pregão Eletrônico</option>
+                <option value="DISPENSA_LICITACAO">Dispensa de Licitação</option>
+                <option value="CONCORRENCIA_PUBLICA">Concorrência Pública</option>
+              </select>
+
+              <div class="form-group">
+              <label for="dataProcesso" class="form-label">
+                Data do Processo <span style="color:var(--status-pendente-text)">*</span>
+              </label>
+              <input type="date" id="dataProcesso" class="form-input" style="height: 38px;" required/>
+            </div>
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+            <label for="valorEstimado" class="form-label">Valor Estimado (R$)</label>
+            <input type="number" id="valorEstimado" class="form-input"
+                   placeholder="0.00" min="0" step="0.01"/>
+          </div>
+
+          <input type="hidden" id="status" name="status" value="PENDENTE" />
+
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 32px; justify-content: flex-end;">
+          <a href="/licitacoes" class="btn-secondary">Cancelar</a>
+          <button class="btn-primary" id="btn-salvar" onclick="salvarContratacao()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Salvar Processo
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  async function salvarContratacao() {
+    const btn      = document.getElementById('btn-salvar');
+    const erroDiv  = document.getElementById('form-erro');
+
+    const payload = {
+      numeroProcesso:   document.getElementById('numeroProcesso').value.trim(),
+      empresaLicitante: document.getElementById('empresaLicitante').value.trim(),
+      objeto:           document.getElementById('objeto').value.trim(),
+      modalidade:       document.getElementById('modalidade').value,
+      dataProcesso:     document.getElementById('dataProcesso').value, // <-- Capturando a data
+      status:           document.getElementById('status').value,
+      valorEstimado:    parseFloat(document.getElementById('valorEstimado').value || '0'),
+    };
+
+    if (!payload.numeroProcesso || !payload.empresaLicitante || !payload.objeto || !payload.modalidade || !payload.dataProcesso) {
+      erroDiv.textContent = 'Preencha todos os campos obrigatórios (*)';
+      erroDiv.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+    erroDiv.style.display = 'none';
+
+    try {
+      const resp = await fetch('/api/contratacoes', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.mensagem || 'Erro ao salvar.');
+      }
+
+      window.location.href = '/licitacoes';
+
+    } catch (err) {
+      erroDiv.textContent = err.message;
+      erroDiv.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar Processo
+      `;
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+      salvarContratacao();
+    }
+  });
+</script>
+
+<script th:src="@{/js/nav.js}"></script>
+</body>
+</html>

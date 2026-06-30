@@ -1,0 +1,41 @@
+[ {
+  "id" : "ed8b5717-1e02-4b75-9afa-3990bf9f7441",
+  "numeroProcesso" : "PE 000/2026",
+  "empresaLicitante" : "Metropole Digital",
+  "objeto" : "Software de alto desempenho",
+  "dataProcesso" : "2026-01-22",
+  "modalidade" : "DISPENSA_LICITACAO",
+  "status" : "APROVADO",
+  "valorEstimado" : 10000.0,
+  "documentos" : [ ]
+}, {
+  "id" : "e6a686b6-e055-4f23-82e9-45fb37a9d244",
+  "numeroProcesso" : "PE 003/2025",
+  "empresaLicitante" : "Construção LTDA",
+  "objeto" : "Reforma de um orgão",
+  "dataProcesso" : "2025-04-02",
+  "modalidade" : "CONCORRENCIA_PUBLICA",
+  "status" : "EM_ANALISE",
+  "valorEstimado" : 500000.0,
+  "documentos" : [ ]
+}, {
+  "id" : "08803bcb-a50c-42f2-8789-f954e38d6e2d",
+  "numeroProcesso" : "AP 002/2026",
+  "empresaLicitante" : "POC LTDA",
+  "objeto" : "Parada GLS",
+  "dataProcesso" : "2026-06-01",
+  "modalidade" : "DISPENSA_LICITACAO",
+  "status" : "APROVADO",
+  "valorEstimado" : 30000.0,
+  "documentos" : [ ]
+}, {
+  "id" : "130d1084-7379-4eda-b4bf-de6817ef861c",
+  "numeroProcesso" : "PE 000/2026",
+  "empresaLicitante" : "Metropole Digital",
+  "objeto" : "Aplicação WEB",
+  "dataProcesso" : "2026-06-29",
+  "modalidade" : "DISPENSA_LICITACAO",
+  "status" : "EM_ANALISE",
+  "valorEstimado" : 20000.0,
+  "documentos" : [ ]
+} ]
